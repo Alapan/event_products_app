@@ -1,0 +1,44 @@
+There are two tables - "events" and "products", created in a "test" database in MySQL.
+
+Schema for "events":
+
+CREATE TABLE events (
+  `event_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `event_service_fee_amount` int(11) DEFAULT NULL,
+  `event_service_fee_currency` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`event_id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1
+
+
+Schema for "products":
+
+CREATE TABLE products (
+  `product_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `event_id` int(11) DEFAULT NULL,
+  `product_service_fee_amount` int(11) DEFAULT NULL,
+  `product_service_fee_currency` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`product_id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `event_id` (`event_id`),
+  CONSTRAINT `products_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1
+
+
+
+The following queries were run to create test data in the "events" and "products" table:
+
+"events" table:
+
+1) INSERT INTO test.events(name,event_service_fee_amount,event_service_fee_currency) VALUES ('Eclecia',10000,'$')
+2) INSERT INTO test.events(name,event_service_fee_amount,event_service_fee_currency) VALUES ('Dakshh',20000,'£')
+3) INSERT INTO test.events(name,event_service_fee_amount,event_service_fee_currency) VALUES ('Xavotsav',5000,'£')
+
+"products" table:
+
+1) INSERT INTO test.products(name,quantity,event_id,product_service_fee_amount,product_service_fee_currency) VALUES ('speakers',30,(SELECT event_id FROM test.events WHERE event_id=2),20,'$')
+2) INSERT INTO test.products(name,quantity,event_id,product_service_fee_amount,product_service_fee_currency) VALUES ('mikes',25,(SELECT event_id FROM test.events WHERE event_id=2),0,'$')
+
