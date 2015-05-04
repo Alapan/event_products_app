@@ -3,8 +3,9 @@ import re
 from re import sub
 from decimal import Decimal
 
-# returns a cursor object which can access the database
+
 def connection():
+	'''returns a cursor object which can access the database'''
 	try:
 		# open database connection. The parameters have to be set according to the MySQL installation being used
 		db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", passwd="root")
@@ -14,9 +15,8 @@ def connection():
 	except MySQLdb.Error as e:
 		print(e)
 
-# run query against entered event name to check if it exists or not. If a null object is returned, an error return code is set and the function returns.
 def validate_event_name(event_name):
-
+	'''run query against entered event name to check if it exists or not. If a null object is returned, an error return code is set and the function returns.'''
 	try:
 	
 		cursor = connection()
@@ -36,9 +36,8 @@ def validate_event_name(event_name):
 	finally:
 		cursor.close()
 
-# run query against entered product name to check if it exists or not. If a null object is returned, an error return code is set and the function returns.
 def validate_product_name(product_name):
-
+	'''run query against entered product name to check if it exists or not. If a null object is returned, an error return code is set and the function returns.'''
 	try:
 		cursor = connection()
 		#As the product name is unique in the database as well, only one valid product object for an entered name may be returned.
@@ -55,9 +54,9 @@ def validate_product_name(product_name):
 
 	finally:
 		cursor.close()
-# check the entered quantity against the amount available as recorded in the database
-def validate_quantity_amount(product_name, input_quantity):
 
+def validate_quantity_amount(product_name, input_quantity):	
+	'''check the entered quantity against the amount available as recorded in the database'''
 	try:
 		cursor = connection()
 		SQL_quantity = "SELECT * FROM test.products WHERE name = (%s);"
@@ -78,15 +77,16 @@ def validate_quantity_amount(product_name, input_quantity):
 	finally:
 		cursor.close()
 
-# Validate sign on input quantity
-def validate_quantity_symbol(input_quantity):
 
+def validate_quantity_symbol(input_quantity):
+	'''Validate sign on input quantity'''
 	if input_quantity < 0:
 		return -1
 	else:
 		return
 
 def readInput():
+	'''This function reads the entered input and calls other methods for input data validation and processing'''
 
 	# an input dictionary to hold product name(key)-quantity(value) pairs. If the same product name is entered twice, only the first is considered.
 	input_dict = {}
@@ -148,7 +148,6 @@ def readInput():
 	for product_name in input_dict:
 		price_list.append(runquery(product_name, input_dict[product_name]))
 
-	# this function will calculate the total price of all ordered items
 	calculate_total_service_fee(price_list)
 
 
@@ -156,7 +155,7 @@ def readInput():
 		
 
 def calculate_total_service_fee(price_list):
-
+	'''this function will calculate the total price of all ordered items'''
 	price = 0
 	# the list items are in string format, so they have to converted to number and the currency symbol removed to perform the addition
 	for i in price_list:
@@ -176,9 +175,9 @@ def calculate_total_service_fee(price_list):
 
 	
 
-# run all queries from this function
+
 def runquery(product_name, input_quantity):
-	
+	'''run all queries from this function'''
 	try:
 
 		cursor = connection()
@@ -215,8 +214,9 @@ def runquery(product_name, input_quantity):
 	finally:
 		cursor.close()
 
-# for each set of products, this function is called
+
 def calculate_service_fee_one_product(input_quantity, service_fee_amount, currency):
+	'''for each set of products, this function is called to calculate fee'''
 	# at this stage price is an integer
 	price = input_quantity * service_fee_amount
 	# the price will be displayed to the user as a currency value, so the currency value from the database will be appended to the string version of the price
